@@ -4,6 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    pretix.url: '%env(string:PRETIX_URL)%'
+    pretix.api_key: '%env(string:PRETIX_API_KEY)%'
+    pretix.organiser: '%env(string:PRETIX_ORGANISER)%'
+    pretix.event: '%env(string:PRETIX_EVENT)%'
 
 services:
     # default configuration for services in *this* file
@@ -15,6 +19,14 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+
+    App\DataAccessLayer\Pretix\PretixApiClient:
+        arguments:
+            $client: '@http_client'
+            $baseUrl: '%pretix.url%'
+            $apiKey: '%pretix.api_key%'
+            $event: '%pretix.event%'
+            $organiser: '%pretix.organiser%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
