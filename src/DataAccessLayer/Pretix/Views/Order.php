@@ -2,7 +2,7 @@
 
 namespace App\DataAccessLayer\Pretix\Views;
 
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 class Order
 {
@@ -27,10 +27,10 @@ class Order
 
     public function __construct($orderObj)
     {
-        $this->code = $orderObj->code;
-        $this->status = $orderObj->status;
+        $this->code     = $orderObj->code;
+        $this->status   = $orderObj->status;
         $this->testMode = $orderObj->testmode;
-        $this->email = $orderObj->email;
+        $this->email    = $orderObj->email;
         try {
             $this->datetime = Carbon::parse($orderObj->datetime);
         } catch (\Exception) {

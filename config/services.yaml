@@ -8,6 +8,7 @@ parameters:
     pretix.api_key: '%env(string:PRETIX_API_KEY)%'
     pretix.organiser: '%env(string:PRETIX_ORGANISER)%'
     pretix.event: '%env(string:PRETIX_EVENT)%'
+    eboekhouden.api_token: '%env(string:E_BOEK_HOUDEN_API_TOKEN)%'
 
 services:
     # default configuration for services in *this* file
@@ -27,6 +28,13 @@ services:
             $apiKey: '%pretix.api_key%'
             $event: '%pretix.event%'
             $organiser: '%pretix.organiser%'
+
+    App\DataAccessLayer\EBoekhouden\EBoekhoudenApi:
+        arguments:
+            $serializer: '@serializer'
+            $httpClient: '@http_client'
+            $apiToken: '%eboekhouden.api_token%'
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
