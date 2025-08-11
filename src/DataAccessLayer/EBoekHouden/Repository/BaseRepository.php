@@ -7,6 +7,7 @@ use App\DataAccessLayer\EBoekHouden\FilterParams\FilterParamInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -16,7 +17,8 @@ class BaseRepository
 {
     public function __construct(
         protected readonly SerializerInterface $serializer,
-        protected readonly EBoekHoudenApi      $boekHoudenApi
+        protected readonly EBoekHoudenApi      $boekHoudenApi,
+        protected readonly CacheInterface      $cache
     ) {
     }
 
@@ -28,8 +30,8 @@ class BaseRepository
     }
 
     /**
-     * @param  string  $url
-     * @param  class-string  $viewClass
+     * @param string $url
+     * @param class-string $viewClass
      * @return object
      * @throws ExceptionInterface
      * @throws ClientExceptionInterface
@@ -71,8 +73,8 @@ class BaseRepository
     }
 
     /**
-     * @param  string  $url
-     * @param  FilterParamInterface[]  $params
+     * @param string $url
+     * @param FilterParamInterface[] $params
      * @return string
      */
     private function applyParamsToUrl(string $url, array $params): string
@@ -88,6 +90,6 @@ class BaseRepository
 
         $queryStr = implode('&', $str);
 
-        return $url.'?'.$queryStr;
+        return $url . '?' . $queryStr;
     }
 }

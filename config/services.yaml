@@ -9,6 +9,10 @@ parameters:
     pretix.organiser: '%env(string:PRETIX_ORGANISER)%'
     pretix.event: '%env(string:PRETIX_EVENT)%'
     eboekhouden.api_token: '%env(string:E_BOEK_HOUDEN_API_TOKEN)%'
+    eboekhouden.stripe_ledger: '%env(string:E_BOEK_HOUDEN_STRIPE_LEDGER)%'
+    eboekhouden.paypal_ledger: '%env(int:E_BOEK_HOUDEN_PAYPAL_LEDGER)%'
+    eboekhouden.stripe_costs_ledger: '%env(int:E_BOEK_HOUDEN_STRIPE_COSTS_LEDGER)%'
+    eboekhouden.paypal_costs_ledger: '%env(int:E_BOEK_HOUDEN_PAYPAL_COSTS_LEDGER)%'
 
 services:
     # default configuration for services in *this* file
@@ -35,6 +39,14 @@ services:
             $httpClient: '@http_client'
             $apiToken: '%eboekhouden.api_token%'
 
-
+    App\DataAccessLayer\EBoekHouden\Repository\LedgerRepository:
+        arguments:
+            $serializer: '@serializer'
+            $boekHoudenApi: '@App\DataAccessLayer\EBoekhouden\EBoekhoudenApi'
+            $cache: '@cache.app'
+            $stripeLedger: '%eboekhouden.stripe_ledger%'
+            $paypalLedger: '%eboekhouden.paypal_ledger%'
+            $stripeCostsLedger: '%eboekhouden.stripe_costs_ledger%'
+            $paypalCostsLedger: '%eboekhouden.paypal_costs_ledger%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

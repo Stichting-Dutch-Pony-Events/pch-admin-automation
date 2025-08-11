@@ -5,7 +5,9 @@ namespace App\DataAccessLayer\Pretix;
 use App\Util\MimeUtils;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class PretixApiClient
 {
@@ -19,15 +21,17 @@ class PretixApiClient
         if (!str_ends_with($baseUrl, '/')) {
             $baseUrl .= '/';
         }
-        $baseUrl .= 'api/v1/organizers/'.$organiser.'/';
+        $baseUrl .= 'api/v1/organizers/' . $organiser . '/';
 
-        $this->client = $this->client->withOptions([
-            'base_uri' => $baseUrl,
-            'headers'  => [
-                'Authorization' => 'Token '.$apiKey,
-                'Accept'        => 'application/json'
+        $this->client = $this->client->withOptions(
+            [
+                'base_uri' => $baseUrl,
+                'headers'  => [
+                    'Authorization' => 'Token ' . $apiKey,
+                    'Accept'        => 'application/json'
+                ]
             ]
-        ]);
+        );
     }
 
     public function setEvent(string $event): self
@@ -46,7 +50,7 @@ class PretixApiClient
             } else {
                 $url .= '&';
             }
-            $url .= $key.'='.$value;
+            $url .= $key . '=' . $value;
             $i++;
         }
         return $url;
@@ -58,14 +62,14 @@ class PretixApiClient
             $parameters = [];
         }
         $parameters['page'] = 1;
-        $nextPageExists     = true;
-        $results            = [];
+        $nextPageExists = true;
+        $results = [];
         while ($nextPageExists) {
             $nextPageExists = false;
-            $url            = $this->addParametersToUrl($uri, $parameters);
+            $url = $this->addParametersToUrl($uri, $parameters);
 
             if ($prependEvent) {
-                $url = 'events/'.$this->event.'/'.$url;
+                $url = 'events/' . $this->event . '/' . $url;
             }
 
             $objects = json_decode($this->client->request(Request::METHOD_GET, $url)->getContent());
@@ -83,17 +87,29 @@ class PretixApiClient
     public function retrieve(string $uri, bool $prependEvent = true): object
     {
         if ($prependEvent) {
-            $uri = 'events/'.$this->event.'/'.$uri;
+            $uri = 'events/' . $this->event . '/' . $uri;
         }
 
         return json_decode($this->client->request(Request::METHOD_GET, $uri)->getContent());
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function retrieveRaw(string $uri, bool $prependEvent = true): ResponseInterface
+    {
+        if ($prependEvent) {
+            $uri = 'events/' . $this->event . '/' . $uri;
+        }
+
+        return $this->client->request(Request::METHOD_GET, $uri);
+    }
+
     public function downloadImage(string $url, string $path): string
     {
-        $res  = $this->client->request(Request::METHOD_GET, $url);
-        $ext  = MimeUtils::mime2ext($res->getHeaders()['content-type'][0]);
-        $path .= '.'.$ext;
+        $res = $this->client->request(Request::METHOD_GET, $url);
+        $ext = MimeUtils::mime2ext($res->getHeaders()['content-type'][0]);
+        $path .= '.' . $ext;
         file_put_contents($path, $res->getContent());
         return $path;
     }
@@ -101,7 +117,7 @@ class PretixApiClient
     public function post(string $uri, object $data, bool $prependEvent = true): object
     {
         if ($prependEvent) {
-            $uri = 'events/'.$this->event.'/'.$uri;
+            $uri = 'events/' . $this->event . '/' . $uri;
         }
 
         $response = null;
