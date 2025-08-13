@@ -8,7 +8,7 @@ class Relation
 {
     public function __construct(
         public int              $id,
-        public RelationTypeEnum $relationType,
+        public RelationTypeEnum $type,
         public string           $code,
         public string           $name,
         public string           $address = '',

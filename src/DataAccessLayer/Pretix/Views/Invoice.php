@@ -2,7 +2,7 @@
 
 namespace App\DataAccessLayer\Pretix\Views;
 
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 class Invoice
 {
@@ -46,25 +46,25 @@ class Invoice
 
     public function __construct($item)
     {
-        $this->number = $item->number;
-        $this->order = $item->order;
-        $this->isCancellation = $item->is_cancellation;
-        $this->invoiceFromName = $item->invoice_from_name;
+        $this->number             = $item->number;
+        $this->order              = $item->order;
+        $this->isCancellation     = $item->is_cancellation;
+        $this->invoiceFromName    = $item->invoice_from_name;
         $this->invoiceFromAddress = $item->invoice_from;
-        $this->invoiceFromZip = $item->invoice_from_zipcode;
-        $this->invoiceFromCity = $item->invoice_from_city;
+        $this->invoiceFromZip     = $item->invoice_from_zipcode;
+        $this->invoiceFromCity    = $item->invoice_from_city;
         $this->invoiceFromCountry = $item->invoice_from_country;
-        $this->invoiceFromVatId = $item->invoice_from_vat_id;
+        $this->invoiceFromVatId   = $item->invoice_from_vat_id;
 
-        $this->invoiceToAddress = $item->invoice_to;
-        $this->invoiceToCompany = $item->invoice_to_company;
-        $this->invoiceToName = $item->invoice_to_name;
-        $this->invoiceToStreet = $item->invoice_to_street;
-        $this->invoiceToZip = $item->invoice_to_zipcode;
-        $this->invoiceToCity = $item->invoice_to_city;
-        $this->invoiceToState = $item->invoice_to_state;
-        $this->invoiceToCountry = $item->invoice_to_country;
-        $this->invoiceToVatId = $item->invoice_to_vat_id;
+        $this->invoiceToAddress     = $item->invoice_to;
+        $this->invoiceToCompany     = $item->invoice_to_company;
+        $this->invoiceToName        = $item->invoice_to_name;
+        $this->invoiceToStreet      = $item->invoice_to_street;
+        $this->invoiceToZip         = $item->invoice_to_zipcode;
+        $this->invoiceToCity        = $item->invoice_to_city;
+        $this->invoiceToState       = $item->invoice_to_state;
+        $this->invoiceToCountry     = $item->invoice_to_country;
+        $this->invoiceToVatId       = $item->invoice_to_vat_id;
         $this->invoiceToBeneficiary = $item->invoice_to_beneficiary;
 
         $this->customField = $item->custom_field;
@@ -75,14 +75,14 @@ class Invoice
             $this->date = null;
         }
 
-        $this->refers = $item->refers;
-        $this->locale = $item->locale;
-        $this->introductoryText = $item->introductory_text;
-        $this->additionalText = $item->additional_text;
+        $this->refers              = $item->refers;
+        $this->locale              = $item->locale;
+        $this->introductoryText    = $item->introductory_text;
+        $this->additionalText      = $item->additional_text;
         $this->paymentProviderText = $item->payment_provider_text;
-        $this->footerText = $item->footer_text;
+        $this->footerText          = $item->footer_text;
 
-        if(is_array($item->lines)) {
+        if (is_array($item->lines)) {
             $this->lines = [];
             foreach ($item->lines as $line) {
                 $this->lines[] = new InvoiceLine($line);
@@ -92,7 +92,7 @@ class Invoice
         }
 
         $this->foreignCurrencyDisplay = $item->foreign_currency_display;
-        $this->foreignCurrencyRate = $item->foreign_currency_rate;
+        $this->foreignCurrencyRate    = $item->foreign_currency_rate;
         try {
             $this->foreignCurrencyRateDate = Carbon::parse($item->foreign_currency_rate_date);
         } catch (\Exception) {

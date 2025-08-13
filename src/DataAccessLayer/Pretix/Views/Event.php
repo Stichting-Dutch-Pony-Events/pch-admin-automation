@@ -12,4 +12,17 @@ class Event
         public string $currency,
     ) {
     }
+
+    public function getName(): string
+    {
+        if (isset($this->name['en'])) {
+            return $this->name['en'];
+        }
+
+        if (isset($this->name['nl'])) {
+            return $this->name['nl'];
+        }
+
+        return 'Unknown Event';
+    }
 }

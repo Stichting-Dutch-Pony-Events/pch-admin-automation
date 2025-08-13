@@ -8,11 +8,10 @@ use App\DataAccessLayer\EBoekHouden\Responses\RelationCreatedResponse;
 use App\DataAccessLayer\EBoekHouden\Responses\RelationListResponse;
 use App\DataAccessLayer\EBoekHouden\Views\Relation;
 use App\Util\Exceptions\Exception\Common\InvalidApiResponseException;
-use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 
 class RelationRepository extends BaseRepository
 {
-    public function retrieveByEmail(string $email): Relation
+    public function retrieveByEmail(string $email): ?Relation
     {
         $relationListResponse = $this->retrieveMany('v1/relation', RelationListResponse::class, [
             new StringFilter('email', strtolower($email)),
@@ -23,10 +22,10 @@ class RelationRepository extends BaseRepository
         }
 
         if ($relationListResponse->count === 0) {
-            throw new EntityNotFoundException('Relation not found for email: '.$email);
+            return null;
         }
 
-        return $relationListResponse->items[0];
+        return $this->retrieveById($relationListResponse->items[0]->id);
     }
 
     public function retrieveById(int $id): Relation

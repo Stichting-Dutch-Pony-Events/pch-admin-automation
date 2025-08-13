@@ -17,12 +17,14 @@ class LedgerRepository extends BaseRepository
 {
     public function __construct(
         SerializerInterface $serializer,
-        EBoekHoudenApi      $boekHoudenApi,
-        CacheInterface      $cache,
-        private string      $stripeLedger,
-        private string      $paypalLedger,
-        private string      $stripeCostsLedger,
-        private string      $paypalCostsLedger
+        EBoekHoudenApi $boekHoudenApi,
+        CacheInterface $cache,
+        private readonly string $stripeLedger,
+        private readonly string $paypalLedger,
+        private readonly string $stripeCostsLedger,
+        private readonly string $paypalCostsLedger,
+        private readonly string $debtorsLedger,
+        private readonly string $defaultLedger
     ) {
         parent::__construct($serializer, $boekHoudenApi, $cache);
     }
@@ -33,17 +35,17 @@ class LedgerRepository extends BaseRepository
      */
     public function getLedgerByCode(string $code): ?Ledger
     {
-        return $this->cache->get('eboekhounden-ledger-' . $code, function (ItemInterface $item) use ($code): Ledger {
+        return $this->cache->get('eboekhounden-ledger-'.$code, function (ItemInterface $item) use ($code): Ledger {
             $item->expiresAfter(86400);
 
             $ledgerResponse = $this->retrieveMany(
-                'v1/ledgers',
+                'v1/ledger',
                 LedgerListResponse::class,
                 [
                     new StringFilter(
                         field: 'code',
                         value: $code,
-                        type:  StringFilterType::EQUAL
+                        type: StringFilterType::EQUAL
                     )
                 ]
             );
@@ -53,7 +55,7 @@ class LedgerRepository extends BaseRepository
             }
 
             if ($ledgerResponse->count === 0) {
-                throw new EntityNotFoundException('Ledger not found with code: ' . $code);
+                throw new EntityNotFoundException('Ledger not found with code: '.$code);
             }
 
             return $ledgerResponse->items[0];
@@ -78,5 +80,15 @@ class LedgerRepository extends BaseRepository
     public function getPaypalCostsLedger(): Ledger
     {
         return $this->getLedgerByCode($this->paypalCostsLedger);
+    }
+
+    public function getDebtorLedger(): Ledger
+    {
+        return $this->getLedgerByCode($this->debtorsLedger);
+    }
+
+    public function getDefaultLedger(): Ledger
+    {
+        return $this->getLedgerByCode($this->defaultLedger);
     }
 }

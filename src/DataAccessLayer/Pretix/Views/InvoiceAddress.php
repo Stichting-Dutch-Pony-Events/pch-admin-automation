@@ -2,7 +2,8 @@
 
 namespace App\DataAccessLayer\Pretix\Views;
 
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
+use Transliterator;
 
 class InvoiceAddress
 {
@@ -25,15 +26,41 @@ class InvoiceAddress
         } catch (\Exception) {
             $this->lastModified = null;
         }
-        $this->company = $invAddObj->company;
-        $this->isBusiness = $invAddObj->is_business;
-        $this->name = $invAddObj->name;
-        $this->street = $invAddObj->street;
-        $this->zipCode = $invAddObj->zipcode;
-        $this->city = $invAddObj->city;
-        $this->country = $invAddObj->country;
-        $this->state = $invAddObj->state;
+        $this->company           = $invAddObj->company;
+        $this->isBusiness        = $invAddObj->is_business;
+        $this->name              = $invAddObj->name;
+        $this->street            = $invAddObj->street;
+        $this->zipCode           = $invAddObj->zipcode;
+        $this->city              = $invAddObj->city;
+        $this->country           = $invAddObj->country;
+        $this->state             = $invAddObj->state;
         $this->internalReference = $invAddObj->internal_reference;
-        $this->vatId = $invAddObj->vat_id;
+        $this->vatId             = $invAddObj->vat_id;
+    }
+
+    public function getRelationCode(): string
+    {
+        $relCode = substr(strtoupper(('PT'.$this->country.$this->zipCode)), 0, 8);
+
+        if ($this->company !== null && $this->company !== '') {
+            $relCode .= '_'.substr($this->company, 0, 6);
+        } else {
+            $nameParts = explode(' ', $this->name);
+            if (count($nameParts) > 1) {
+                $relCode   .= '_';
+                $lastName  = $nameParts[count($nameParts) - 1];
+                $firstName = $nameParts[0];
+                $relCode   .= substr($lastName, 0, 3);
+                $relCode   .= substr($firstName, 0, 3);
+            } else {
+                $relCode .= '_'.substr($this->name, 0, 6);
+            }
+        }
+
+        $transliterator = Transliterator::createFromRules(
+            ':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: Lower(); :: NFC;',
+            Transliterator::FORWARD
+        );
+        return $transliterator->transliterate(substr($relCode, 0, 15));
     }
 }

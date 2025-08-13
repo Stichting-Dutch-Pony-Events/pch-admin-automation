@@ -79,12 +79,26 @@ enum VatCodeEnum: string
      */
     case BI_EU_INK = 'BI_EU_INK';
 
+    /**
+     * Geen BTW van toepassing.
+     */
+    case GEEN = 'GEEN';
+
     public function getPercentage(): int
     {
         return match ($this) {
             self::HOOG_VERK_21, self::HOOG_INK_21, self::VERL_VERK => 21,
             self::LAAG_VERK_9, self::LAAG_INK_9, self::VERL_VERK_L9 => 9,
             default => 0,
+        };
+    }
+
+    public static function getSalesVatFromPercentage(int $percentage): ?self
+    {
+        return match ($percentage) {
+            21 => self::HOOG_VERK_21,
+            9 => self::LAAG_VERK_9,
+            default => self::AFW,
         };
     }
 }

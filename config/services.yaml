@@ -10,9 +10,14 @@ parameters:
     pretix.event: '%env(string:PRETIX_EVENT)%'
     eboekhouden.api_token: '%env(string:E_BOEK_HOUDEN_API_TOKEN)%'
     eboekhouden.stripe_ledger: '%env(string:E_BOEK_HOUDEN_STRIPE_LEDGER)%'
-    eboekhouden.paypal_ledger: '%env(int:E_BOEK_HOUDEN_PAYPAL_LEDGER)%'
-    eboekhouden.stripe_costs_ledger: '%env(int:E_BOEK_HOUDEN_STRIPE_COSTS_LEDGER)%'
-    eboekhouden.paypal_costs_ledger: '%env(int:E_BOEK_HOUDEN_PAYPAL_COSTS_LEDGER)%'
+    eboekhouden.paypal_ledger: '%env(string:E_BOEK_HOUDEN_PAYPAL_LEDGER)%'
+    eboekhouden.stripe_costs_ledger: '%env(string:E_BOEK_HOUDEN_STRIPE_COSTS_LEDGER)%'
+    eboekhouden.paypal_costs_ledger: '%env(string:E_BOEK_HOUDEN_PAYPAL_COSTS_LEDGER)%'
+    eboekhouden.debtors_ledger: '%env(string:E_BOEK_HOUDEN_DEBTORS_LEDGER)%'
+    eboekhouden.default_ledger: '%env(string:E_BOEK_HOUDEN_DEFAULT_LEDGER)%'
+    stripe.secret_key: '%env(string:STIPE_SECRET_KEY)%'
+    paypal.client_id: '%env(string:PAYPAL_CLIENT_ID)%'
+    paypal.secret: '%env(string:PAYPAL_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -33,7 +38,7 @@ services:
             $event: '%pretix.event%'
             $organiser: '%pretix.organiser%'
 
-    App\DataAccessLayer\EBoekhouden\EBoekhoudenApi:
+    App\DataAccessLayer\EBoekHouden\EBoekHoudenApi:
         arguments:
             $serializer: '@serializer'
             $httpClient: '@http_client'
@@ -42,11 +47,24 @@ services:
     App\DataAccessLayer\EBoekHouden\Repository\LedgerRepository:
         arguments:
             $serializer: '@serializer'
-            $boekHoudenApi: '@App\DataAccessLayer\EBoekhouden\EBoekhoudenApi'
+            $boekHoudenApi: '@App\DataAccessLayer\EBoekHouden\EBoekHoudenApi'
             $cache: '@cache.app'
             $stripeLedger: '%eboekhouden.stripe_ledger%'
             $paypalLedger: '%eboekhouden.paypal_ledger%'
             $stripeCostsLedger: '%eboekhouden.stripe_costs_ledger%'
             $paypalCostsLedger: '%eboekhouden.paypal_costs_ledger%'
+            $debtorsLedger: '%eboekhouden.debtors_ledger%'
+            $defaultLedger: '%eboekhouden.default_ledger%'
+
+    App\DataAccessLayer\StripeWrapper:
+        arguments:
+            $stripeApiKey: '%stripe.secret_key%'
+
+    App\DataAccessLayer\PayPal\PayPalApi:
+        arguments:
+            $httpClient: '@http_client'
+            $serializer: '@serializer'
+            $paypalClientId: '%paypal.client_id%'
+            $paypalSecret: '%paypal.secret%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

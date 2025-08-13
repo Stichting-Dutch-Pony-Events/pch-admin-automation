@@ -3,6 +3,7 @@
 namespace App\DataAccessLayer\EBoekHouden;
 
 use App\DataAccessLayer\EBoekHouden\Views\Session;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -16,7 +17,7 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
 class EBoekHoudenApi implements HttpClientInterface
 {
-    public const EB_API_BASE_URL = 'https://api.eboekhouden.nl/';
+    public const EB_API_BASE_URL = 'https://api.e-boekhouden.nl/';
 
     private ?Session $session = null;
 
@@ -46,20 +47,24 @@ class EBoekHoudenApi implements HttpClientInterface
      */
     private function authenticate(): void
     {
-        $response = $this->request(
-            Request::METHOD_POST,
-            self::EB_API_BASE_URL.'v1/session',
-            [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept'       => 'application/json',
-                ],
-                'json'    => [
-                    'access_token' => $this->apiToken,
-                    'source'       => 'PCH_Administration_API',
+        try {
+            $response = $this->request(
+                Request::METHOD_POST,
+                self::EB_API_BASE_URL.'v1/session',
+                [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept'       => 'application/json',
+                    ],
+                    'json'    => [
+                        'accessToken' => $this->apiToken,
+                        'source'      => 'AdminApi',
+                    ]
                 ]
-            ]
-        );
+            );
+        } catch (ClientException $e) {
+            var_dump($e->getMessage());
+        }
 
         $this->session = $this->serializer->deserialize($response->getContent(), Session::class, 'json');
     }

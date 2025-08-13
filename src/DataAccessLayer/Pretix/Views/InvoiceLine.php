@@ -2,7 +2,7 @@
 
 namespace App\DataAccessLayer\Pretix\Views;
 
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 class InvoiceLine
 {
@@ -24,12 +24,12 @@ class InvoiceLine
 
     public function __construct($item)
     {
-        $this->position = $item->position;
-        $this->description = $item->description;
-        $this->item = $item->item;
-        $this->variation = $item->variation;
-        $this->subevent = $item->subevent;
-        $this->feeType = $item->fee_type;
+        $this->position        = $item->position;
+        $this->description     = $item->description;
+        $this->item            = $item->item;
+        $this->variation       = $item->variation;
+        $this->subevent        = $item->subevent;
+        $this->feeType         = $item->fee_type;
         $this->feeInternalType = $item->fee_internal_type;
         try {
             $this->eventDateFrom = Carbon::parse($item->event_date_from);
@@ -42,10 +42,10 @@ class InvoiceLine
             $this->eventDateTo = null;
         }
         $this->eventLocation = $item->event_location;
-        $this->attendeeName = $item->attendee_name;
-        $this->grossValue = (float)$item->gross_value;
-        $this->taxValue = (float)$item->tax_value;
-        $this->taxName = $item->tax_name;
-        $this->taxRate = (float)$item->tax_rate;
+        $this->attendeeName  = $item->attendee_name;
+        $this->grossValue    = (float)$item->gross_value;
+        $this->taxValue      = (float)$item->tax_value;
+        $this->taxName       = $item->tax_name;
+        $this->taxRate       = (float)$item->tax_rate;
     }
 }

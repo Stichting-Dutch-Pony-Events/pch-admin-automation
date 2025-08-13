@@ -4,7 +4,7 @@ namespace App\DataAccessLayer\EBoekHouden\FilterParams\Enum;
 
 enum DateFilterType: string
 {
-    case EQUAL = '[eq]';
+    case EQUAL = '';
     case NOT_EQUAL = '[not_eq]';
     case LESS_THAN = '[lt]';
     case LESS_THAN_OR_EQUAL = '[lte]';

@@ -1,42 +1,39 @@
 <?php
 
-namespace App\DataAccessLayer\EBoekHouden\Views;
+namespace App\DataAccessLayer\EBoekHouden\Request;
 
 use App\DataAccessLayer\EBoekHouden\Enum\InExVatEnum;
 use App\DataAccessLayer\EBoekHouden\Enum\MutationTypeEnum;
-use Symfony\Component\Serializer\Attribute\Context;
 
-class Mutation
+class MutationRequest
 {
     /**
-     * @param  int  $id
      * @param  MutationTypeEnum  $type
      * @param  string  $date
      * @param  int  $ledgerId
      * @param  InExVatEnum  $inExVat
-     * @param  string|null  $description
-     * @param  int|null  $termOfPayment
      * @param  string|null  $invoiceNumber
      * @param  string|null  $entryNumber
+     * @param  int|null  $termOfPayment
+     * @param  string|null  $description
+     * @param  bool  $checkPaymentReference
+     * @param  string|null  $paymentReference
      * @param  int|null  $relationId
-     * @param  MutationRow[]  $rows
-     * @param  VatAmount[]  $vat
+     * @param  MutationRowRequest[]  $rows
      */
     public function __construct(
-        public int              $id,
         public MutationTypeEnum $type,
         public string           $date,
         public int              $ledgerId,
-        public InExVatEnum      $inExVat,
-        public ?string          $description = null,
-        public ?int             $termOfPayment = null,
+        public InExVatEnum      $inExVat = InExVatEnum::INCLUDING,
         public ?string          $invoiceNumber = null,
         public ?string          $entryNumber = null,
+        public ?int             $termOfPayment = null,
+        public ?string          $description = null,
+        public bool             $checkPaymentReference = false,
+        public ?string          $paymentReference = null,
         public ?int             $relationId = null,
-        #[Context(['type' => 'array<'.MutationRow::class.'>'])]
         public array            $rows = [],
-        #[Context(['type' => 'array<'.VatAmount::class.'>'])]
-        public array            $vat = [],
     ) {
     }
 }
