@@ -30,8 +30,8 @@ class BaseRepository
     }
 
     /**
-     * @param  string  $url
-     * @param  class-string  $viewClass
+     * @param string $url
+     * @param class-string $viewClass
      * @return object
      * @throws ExceptionInterface
      * @throws ClientExceptionInterface
@@ -73,8 +73,8 @@ class BaseRepository
     }
 
     /**
-     * @param  string  $url
-     * @param  FilterParamInterface[]  $params
+     * @param string $url
+     * @param FilterParamInterface[] $params
      * @return string
      */
     private function applyParamsToUrl(string $url, array $params): string
@@ -90,6 +90,6 @@ class BaseRepository
 
         $queryStr = implode('&', $str);
 
-        return $url.'?'.$queryStr;
+        return $url . '?' . $queryStr;
     }
 }

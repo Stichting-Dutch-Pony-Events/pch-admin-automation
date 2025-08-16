@@ -28,14 +28,14 @@ class EBoekHoudenApi implements HttpClientInterface
     ) {
         $this->authenticate();
 
-        $this->httpClient = $this->httpClient->withOptions([
-            'base_uri' => self::EB_API_BASE_URL,
-            'headers'  => [
-                'Authorization' => $this->session->token,
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
+        $this->httpClient = $this->httpClient->withOptions(
+            [
+                'base_uri' => self::EB_API_BASE_URL,
+                'headers'  => [
+                    'Authorization' => $this->session->token,
+                ]
             ]
-        ]);
+        );
     }
 
     /**
@@ -50,7 +50,7 @@ class EBoekHoudenApi implements HttpClientInterface
         try {
             $response = $this->request(
                 Request::METHOD_POST,
-                self::EB_API_BASE_URL.'v1/session',
+                self::EB_API_BASE_URL . 'v1/session',
                 [
                     'headers' => [
                         'Content-Type' => 'application/json',

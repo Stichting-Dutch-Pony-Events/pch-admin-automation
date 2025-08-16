@@ -2,6 +2,7 @@
 
 namespace App\DataAccessLayer\EBoekHouden\Repository;
 
+use App\DataAccessLayer\EBoekHouden\FilterParams\Enum\StringFilterType;
 use App\DataAccessLayer\EBoekHouden\FilterParams\StringFilter;
 use App\DataAccessLayer\EBoekHouden\Request\RelationRequest;
 use App\DataAccessLayer\EBoekHouden\Responses\RelationCreatedResponse;
@@ -14,7 +15,7 @@ class RelationRepository extends BaseRepository
     public function retrieveByEmail(string $email): ?Relation
     {
         $relationListResponse = $this->retrieveMany('v1/relation', RelationListResponse::class, [
-            new StringFilter('email', strtolower($email)),
+            new StringFilter('email', urlencode(strtolower($email)), StringFilterType::EQUAL),
         ]);
 
         if (!$relationListResponse instanceof RelationListResponse) {
@@ -28,9 +29,26 @@ class RelationRepository extends BaseRepository
         return $this->retrieveById($relationListResponse->items[0]->id);
     }
 
+    public function retrieveByCode(string $code): ?Relation
+    {
+        $relationListResponse = $this->retrieveMany('v1/relation', RelationListResponse::class, [
+            new StringFilter('code', $code, StringFilterType::EQUAL),
+        ]);
+
+        if (!$relationListResponse instanceof RelationListResponse) {
+            throw new InvalidApiResponseException('Invalid response type for relation retrieval by code.');
+        }
+
+        if ($relationListResponse->count === 0) {
+            return null;
+        }
+
+        return $this->retrieveById($relationListResponse->items[0]->id);
+    }
+
     public function retrieveById(int $id): Relation
     {
-        $relation = $this->retrieveOne('v1/relation/'.$id, Relation::class);
+        $relation = $this->retrieveOne('v1/relation/' . $id, Relation::class);
 
         if (!$relation instanceof Relation) {
             throw new InvalidApiResponseException('Invalid response type for relation retrieval by ID.');
@@ -54,11 +72,11 @@ class RelationRepository extends BaseRepository
 
     public function patchRelation(Relation $relation, RelationRequest $relationRequest): Relation
     {
-        $url = 'v1/relation/'.$relation->id;
+        $url = 'v1/relation/' . $relation->id;
 
         $response = $this->patch($url, $relationRequest, Relation::class);
         if (!$response) {
-            throw new InvalidApiResponseException('Failed to update relation with ID: '.$relation->id);
+            throw new InvalidApiResponseException('Failed to update relation with ID: ' . $relation->id);
         }
 
         return $this->retrieveById($relation->id);

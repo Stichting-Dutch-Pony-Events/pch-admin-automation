@@ -16,6 +16,7 @@ class RelationRequest
         public string           $country,
         public string           $emailAddress,
     ) {
+        $this->emailAddress = strtolower($emailAddress);
         $this->code = substr($this->code, 0, 15);
     }
 }
