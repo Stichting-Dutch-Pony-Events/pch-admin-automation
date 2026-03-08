@@ -8,25 +8,24 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
-        "doctrine/collections": "^2.3",
-        "nesbot/carbon": "^3.10.2",
-        "phpdocumentor/reflection-docblock": "^5.6.2",
-        "phpstan/phpdoc-parser": "^2.2",
-        "stripe/stripe-php": "^17.5",
-        "symfony/cache": "7.3.*",
-        "symfony/console": "7.3.*",
-        "symfony/dotenv": "7.3.*",
-        "symfony/flex": "^2.8.1",
-        "symfony/framework-bundle": "7.3.*",
-        "symfony/http-client": "7.3.*",
-        "symfony/monolog-bundle": "^3.10",
-        "symfony/property-access": "7.3.*",
-        "symfony/property-info": "7.3.*",
-        "symfony/runtime": "7.3.*",
-        "symfony/serializer": "7.3.*",
-        "symfony/yaml": "7.3.*"
-    }
-    ,
+        "doctrine/collections": "^2.6",
+        "nesbot/carbon": "^3.11.1",
+        "phpdocumentor/reflection-docblock": "^5.6.6",
+        "phpstan/phpdoc-parser": "^2.3.2",
+        "stripe/stripe-php": "^17.6",
+        "symfony/cache": "7.4.*",
+        "symfony/console": "7.4.*",
+        "symfony/dotenv": "7.4.*",
+        "symfony/flex": "^2.10.0",
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/http-client": "7.4.*",
+        "symfony/monolog-bundle": "^3.11.1",
+        "symfony/property-access": "7.4.*",
+        "symfony/property-info": "7.4.*",
+        "symfony/runtime": "7.4.*",
+        "symfony/serializer": "7.4.*",
+        "symfony/yaml": "7.4.*"
+    },
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },
@@ -77,7 +76,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.3.*"
+            "require": "7.4.*"
         }
     }
 }
