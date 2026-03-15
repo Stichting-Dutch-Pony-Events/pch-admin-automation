@@ -69,7 +69,12 @@ class BaseRepository
             ]
         );
 
-        return $response->getStatusCode() > 200 && $response->getStatusCode() < 400;
+        $success = $response->getStatusCode() > 200 && $response->getStatusCode() < 400;
+        if (!$success) {
+            error_log($response->getContent());
+        }
+
+        return $success;
     }
 
     /**
