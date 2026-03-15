@@ -40,12 +40,21 @@ class InvoiceAddress
 
     public function getRelationCode(): string
     {
-        $relCode = substr(strtoupper(('PT' . $this->country . $this->zipCode)), 0, 8);
+        $transliterator = Transliterator::createFromRules(
+            ':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;',
+            Transliterator::FORWARD
+        );
+
+        $transliterate = static function (string $value) use ($transliterator): string {
+            return $transliterator?->transliterate($value) ?? $value;
+        };
+
+        $relCode = substr(strtoupper(('PT' . $transliterate($this->country) . $transliterate($this->zipCode))), 0, 8);
 
         if ($this->company !== null && $this->company !== '') {
-            $relCode .= '_' . substr($this->company, 0, 6);
+            $relCode .= '_' . substr($transliterate($this->company), 0, 6);
         } else {
-            $nameParts = explode(' ', $this->name);
+            $nameParts = explode(' ', $transliterate($this->name));
             if (count($nameParts) > 1) {
                 $relCode .= '_';
                 $lastName = $nameParts[count($nameParts) - 1];
@@ -53,14 +62,10 @@ class InvoiceAddress
                 $relCode .= substr($lastName, 0, 3);
                 $relCode .= substr($firstName, 0, 3);
             } else {
-                $relCode .= '_' . substr($this->name, 0, 6);
+                $relCode .= '_' . substr($transliterate($this->name), 0, 6);
             }
         }
 
-        $transliterator = Transliterator::createFromRules(
-            ':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;',
-            Transliterator::FORWARD
-        );
-        return $transliterator?->transliterate(substr($relCode, 0, 15)) ?? substr($relCode, 0, 15);
+        return strtoupper(substr($relCode, 0, 15));
     }
 }
